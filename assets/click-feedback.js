@@ -278,11 +278,60 @@
     }, { passive: false });
   }
   
+  // 修复封面图手机端显示不全
+  function fixCoverImageMobile() {
+    const coverImg = document.querySelector('img[alt*="MOLLY"], img[alt*="20周年"]');
+    if (!coverImg) return;
+    if (coverImg.dataset.mobileCoverFixed) return;
+    coverImg.dataset.mobileCoverFixed = 'true';
+
+    // 注入CSS
+    if (!document.getElementById('cover-mobile-fix-css')) {
+      const style = document.createElement('style');
+      style.id = 'cover-mobile-fix-css';
+      style.textContent = `
+        img.absolute.inset-0.w-full.h-full.object-cover.object-top,
+        img[class*="object-cover"][class*="object-top"][alt*="MOLLY"],
+        img[class*="object-cover"][class*="object-top"][alt*="20"] {
+          object-fit: contain !important;
+          object-position: top center !important;
+          width: 100% !important;
+          height: auto !important;
+          max-height: none !important;
+          min-height: 0 !important;
+          position: relative !important;
+          top: auto !important;
+          left: auto !important;
+          right: auto !important;
+          bottom: auto !important;
+          inset: auto !important;
+          display: block !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 移除Tailwind裁剪class
+    coverImg.classList.remove('object-cover');
+    coverImg.classList.remove('absolute');
+    coverImg.classList.remove('inset-0');
+    coverImg.classList.remove('h-full');
+    coverImg.classList.add('object-contain');
+    coverImg.classList.add('relative');
+    coverImg.classList.add('block');
+
+    // inline style确保生效
+    coverImg.style.cssText = 'object-fit:contain;object-position:top center;width:100%;height:auto;position:relative;top:auto;left:auto;right:auto;bottom:auto;display:block;max-width:100%;';
+
+    console.log('[ClickFeedback] 封面图手机端适配已应用');
+  }
+
   // 初始化
   function init() {
     console.log('[ClickFeedback] 初始化点击反馈系统 (触摸设备:', isTouchDevice, ')');
     
     injectClickFeedbackCSS();
+    fixCoverImageMobile();
     addClickFeedbackToButtons();
     addCardClickFeedback();
     addColorButtonFeedback();
