@@ -353,16 +353,16 @@
       parent = parent.parentElement;
     }
 
-    // 直接设置按钮样式 - 定位到封面图"开启旅程"位置
+    // 直接设置按钮样式 - 定位到封面图"开启旅程"位置（9:16竖版图片底部）
     startBtn.style.cssText = `
       position: absolute !important;
-      bottom: 8% !important;
+      bottom: 2% !important;
       left: 50% !important;
       transform: translateX(-50%) !important;
       z-index: 10 !important;
-      width: 55% !important;
-      max-width: 260px !important;
-      height: 48px !important;
+      width: 65% !important;
+      max-width: 300px !important;
+      height: 60px !important;
       background: transparent !important;
       border: none !important;
       padding: 0 !important;
