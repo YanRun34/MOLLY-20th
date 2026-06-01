@@ -392,42 +392,64 @@
     // 查找封面图
     const coverImg = document.querySelector('img[alt*="MOLLY"], img[alt*="20周年"]');
     if (!coverImg) return;
+    if (coverImg.dataset.mobileFixed) return;
+    coverImg.dataset.mobileFixed = 'true';
 
-    // 注入封面图适配CSS
+    // 注入封面图适配CSS - 使用更高优先级的选择器
     if (!document.getElementById('cover-mobile-css')) {
       const style = document.createElement('style');
       style.id = 'cover-mobile-css';
       style.textContent = `
-        /* 封面图手机端完整显示 */
-        img[alt*="MOLLY"], img[alt*="20周年"] {
+        /* 封面图手机端完整显示 - 覆盖Tailwind class */
+        img.absolute.inset-0.w-full.h-full.object-cover.object-top,
+        img[class*="object-cover"][class*="object-top"][alt*="MOLLY"],
+        img[class*="object-cover"][class*="object-top"][alt*="20"] {
           object-fit: contain !important;
           object-position: top center !important;
           width: 100% !important;
           height: auto !important;
-          max-height: 100% !important;
+          max-height: none !important;
+          min-height: 0 !important;
           position: relative !important;
+          top: auto !important;
+          left: auto !important;
+          right: auto !important;
+          bottom: auto !important;
           inset: auto !important;
-        }
-
-        /* 封面容器适配 - 让容器高度自适应图片 */
-        img[alt*="MOLLY"] ~ *,
-        img[alt*="20周年"] ~ * {
-          position: relative !important;
+          display: block !important;
         }
       `;
       document.head.appendChild(style);
     }
 
-    // 直接修改图片样式
-    coverImg.style.objectFit = 'contain';
-    coverImg.style.objectPosition = 'top center';
-    coverImg.style.position = 'relative';
-    coverImg.style.width = '100%';
-    coverImg.style.height = 'auto';
-    coverImg.style.maxHeight = '100vh';
-    coverImg.style.inset = 'auto';
+    // 直接修改图片样式 - 移除导致裁剪的Tailwind class
+    coverImg.classList.remove('object-cover');
+    coverImg.classList.remove('object-top');
+    coverImg.classList.remove('absolute');
+    coverImg.classList.remove('inset-0');
+    coverImg.classList.remove('h-full');
+    coverImg.classList.add('object-contain');
+    coverImg.classList.add('object-top');
+    coverImg.classList.add('relative');
+    coverImg.classList.add('block');
+    coverImg.classList.add('w-full');
 
-    console.log('[UIFixes] 封面图手机端适配已应用');
+    // 用inline style确保生效
+    coverImg.style.cssText = `
+      object-fit: contain;
+      object-position: top center;
+      width: 100%;
+      height: auto;
+      position: relative;
+      top: auto;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      display: block;
+      max-width: 100%;
+    `;
+
+    console.log('[UIFixes] 封面图手机端适配已应用, class:', coverImg.className);
   }
 
   // ==================== 初始化 ====================
