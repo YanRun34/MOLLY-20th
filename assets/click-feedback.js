@@ -326,12 +326,58 @@
     console.log('[ClickFeedback] 封面图手机端适配已应用');
   }
 
+  // 将"开启旅程"按钮定位到封面图中的按钮位置
+  function fixStartButtonPosition() {
+    const startBtn = document.querySelector('button');
+    if (!startBtn) return;
+    const btnText = startBtn.textContent.trim();
+    if (btnText !== '开启旅程') return;
+    if (startBtn.dataset.btnPosFixed) return;
+    startBtn.dataset.btnPosFixed = 'true';
+
+    // 注入CSS
+    if (!document.getElementById('start-btn-pos-css')) {
+      const style = document.createElement('style');
+      style.id = 'start-btn-pos-css';
+      style.textContent = `
+        /* 开启旅程按钮 - 定位到封面图按钮位置 */
+        button[class*="max-w"][class*="rounded-full"][class*="bg-transparent"] {
+          position: absolute !important;
+          bottom: 12% !important;
+          left: 50% !important;
+          transform: translateX(-50%) !important;
+          z-index: 10 !important;
+          width: 60% !important;
+          max-width: 280px !important;
+          height: 52px !important;
+          background: transparent !important;
+          border: none !important;
+          padding: 0 !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 直接设置样式
+    startBtn.style.position = 'absolute';
+    startBtn.style.bottom = '12%';
+    startBtn.style.left = '50%';
+    startBtn.style.transform = 'translateX(-50%)';
+    startBtn.style.zIndex = '10';
+    startBtn.style.width = '60%';
+    startBtn.style.maxWidth = '280px';
+    startBtn.style.height = '52px';
+
+    console.log('[ClickFeedback] 开启旅程按钮位置已调整');
+  }
+
   // 初始化
   function init() {
     console.log('[ClickFeedback] 初始化点击反馈系统 (触摸设备:', isTouchDevice, ')');
     
     injectClickFeedbackCSS();
     fixCoverImageMobile();
+    fixStartButtonPosition();
     addClickFeedbackToButtons();
     addCardClickFeedback();
     addColorButtonFeedback();
