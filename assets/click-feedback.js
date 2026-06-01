@@ -1,0 +1,328 @@
+/**
+ * MOLLY 20周年 H5 点击反馈优化脚本 - 移动端适配版
+ * 修复UI点击时只有放大没有回弹的问题，针对手机端优化
+ */
+
+(function() {
+  'use strict';
+  
+  console.log('[ClickFeedback] 点击反馈优化脚本已加载 (移动端适配版)');
+  
+  // 检测是否为触摸设备
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  
+  // 添加CSS动画样式
+  function injectClickFeedbackCSS() {
+    if (document.getElementById('click-feedback-css')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'click-feedback-css';
+    style.textContent = `
+      /* 按钮点击反馈动画 - 移动端优化 */
+      .click-feedback {
+        transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        -webkit-tap-highlight-color: transparent !important;
+        touch-action: manipulation !important;
+      }
+      
+      .click-feedback:active,
+      .click-feedback.clicking {
+        transform: scale(0.92) !important;
+      }
+      
+      /* 卡片点击反馈 - 移动端优化 */
+      .card-click-feedback {
+        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                    box-shadow 0.15s ease !important;
+        -webkit-tap-highlight-color: transparent !important;
+        touch-action: manipulation !important;
+      }
+      
+      .card-click-feedback:active,
+      .card-click-feedback.clicking {
+        transform: scale(0.94) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+      }
+      
+      /* 颜色按钮点击反馈 - 移动端优化 */
+      .color-btn-feedback {
+        transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+                    filter 0.1s ease !important;
+        -webkit-tap-highlight-color: transparent !important;
+        touch-action: manipulation !important;
+      }
+      
+      .color-btn-feedback:active,
+      .color-btn-feedback.clicking {
+        transform: scale(0.9) !important;
+        filter: brightness(0.85) !important;
+      }
+      
+      /* 导航按钮点击反馈 - 移动端优化 */
+      .nav-btn-feedback {
+        transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        -webkit-tap-highlight-color: transparent !important;
+        touch-action: manipulation !important;
+      }
+      
+      .nav-btn-feedback:active,
+      .nav-btn-feedback.clicking {
+        transform: scale(0.88) !important;
+      }
+      
+      /* 禁用移动端默认的高亮效果 */
+      button, [role="button"], .click-feedback, .card-click-feedback, 
+      .color-btn-feedback, .nav-btn-feedback {
+        -webkit-tap-highlight-color: transparent !important;
+        -webkit-touch-callout: none !important;
+        user-select: none !important;
+      }
+      
+      /* 防止移动端双击缩放 */
+      * {
+        touch-action: manipulation;
+      }
+    `;
+    document.head.appendChild(style);
+    console.log('[ClickFeedback] CSS样式已注入 (移动端适配)');
+  }
+  
+  // 为所有按钮添加点击反馈
+  function addClickFeedbackToButtons() {
+    // 获取所有按钮和可点击元素
+    const buttons = document.querySelectorAll('button, [role="button"], a, input[type="button"], input[type="submit"]');
+    
+    buttons.forEach(btn => {
+      if (btn.dataset.clickFeedbackAdded) return;
+      btn.dataset.clickFeedbackAdded = 'true';
+      
+      // 根据按钮类型添加不同的反馈类
+      const className = btn.className || '';
+      const text = btn.textContent || '';
+      
+      if (className.includes('color') || text.includes('颜色') || className.includes('yellow') || className.includes('blue') || className.includes('pink')) {
+        btn.classList.add('color-btn-feedback');
+      } else if (className.includes('card') || className.includes('world') || className.includes('journey')) {
+        btn.classList.add('card-click-feedback');
+      } else if (className.includes('nav') || text.includes('返回') || text.includes('关闭') || text.includes('静音')) {
+        btn.classList.add('nav-btn-feedback');
+      } else {
+        btn.classList.add('click-feedback');
+      }
+      
+      // 添加触摸/鼠标事件处理
+      addPressFeedback(btn);
+    });
+    
+    console.log('[ClickFeedback] 已为', buttons.length, '个按钮添加点击反馈');
+  }
+  
+  // 为所有可点击的div元素添加反馈
+  function addClickFeedbackToClickableDivs() {
+    const divs = document.querySelectorAll('div[onclick], div[class*="clickable"], div[class*="selectable"]');
+    
+    divs.forEach(div => {
+      if (div.dataset.clickFeedbackAdded) return;
+      div.dataset.clickFeedbackAdded = 'true';
+      
+      div.classList.add('click-feedback');
+      addPressFeedback(div);
+    });
+  }
+  
+  // 添加按压反馈效果 - 移动端优化
+  function addPressFeedback(element) {
+    let isPressed = false;
+    let pressTimer = null;
+    
+    // 触摸开始 - 移动端主要交互方式
+    element.addEventListener('touchstart', (e) => {
+      isPressed = true;
+      // 立即添加点击状态
+      element.classList.add('clicking');
+      
+      // 清除之前的定时器
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+    
+    // 触摸结束
+    element.addEventListener('touchend', () => {
+      isPressed = false;
+      // 短暂延迟后移除点击状态，让用户看到反馈
+      pressTimer = setTimeout(() => {
+        element.classList.remove('clicking');
+      }, 100);
+    }, { passive: true });
+    
+    // 触摸取消
+    element.addEventListener('touchcancel', () => {
+      isPressed = false;
+      element.classList.remove('clicking');
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+    
+    // 触摸移动（手指滑出元素时取消）
+    element.addEventListener('touchmove', (e) => {
+      if (isPressed) {
+        const touch = e.touches[0];
+        const rect = element.getBoundingClientRect();
+        
+        // 检查手指是否还在元素内
+        if (touch.clientX < rect.left || touch.clientX > rect.right ||
+            touch.clientY < rect.top || touch.clientY > rect.bottom) {
+          isPressed = false;
+          element.classList.remove('clicking');
+        }
+      }
+    }, { passive: true });
+    
+    // 鼠标事件（桌面端备用）
+    element.addEventListener('mousedown', () => {
+      isPressed = true;
+      element.classList.add('clicking');
+    }, { passive: true });
+    
+    element.addEventListener('mouseup', () => {
+      isPressed = false;
+      pressTimer = setTimeout(() => {
+        element.classList.remove('clicking');
+      }, 100);
+    }, { passive: true });
+    
+    element.addEventListener('mouseleave', () => {
+      if (isPressed) {
+        isPressed = false;
+        element.classList.remove('clicking');
+      }
+    }, { passive: true });
+  }
+  
+  // 为旅程卡片添加点击反馈
+  function addCardClickFeedback() {
+    // 查找旅程卡片 - 扩大选择范围
+    const cards = document.querySelectorAll('[class*="world"], [class*="card"], [class*="journey"], [class*="game"]');
+    
+    cards.forEach(card => {
+      if (card.dataset.cardFeedbackAdded) return;
+      card.dataset.cardFeedbackAdded = 'true';
+      
+      card.classList.add('card-click-feedback');
+      addPressFeedback(card);
+    });
+    
+    console.log('[ClickFeedback] 已为', cards.length, '个卡片添加点击反馈');
+  }
+  
+  // 为颜色选择按钮添加反馈
+  function addColorButtonFeedback() {
+    // 查找颜色按钮
+    const colorButtons = document.querySelectorAll('[class*="color"], div[style*="background"]');
+    
+    colorButtons.forEach(btn => {
+      if (btn.dataset.colorFeedbackAdded) return;
+      btn.dataset.colorFeedbackAdded = 'true';
+      
+      btn.classList.add('color-btn-feedback');
+      addPressFeedback(btn);
+    });
+  }
+  
+  // 监听新添加的元素
+  function observeNewElements() {
+    const observer = new MutationObserver((mutations) => {
+      let shouldUpdate = false;
+      
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType === 1) { // Element node
+            if (node.tagName === 'BUTTON' || 
+                node.getAttribute('role') === 'button' ||
+                node.querySelectorAll('button, [role="button"]').length > 0) {
+              shouldUpdate = true;
+            }
+          }
+        });
+      });
+      
+      if (shouldUpdate) {
+        setTimeout(() => {
+          addClickFeedbackToButtons();
+          addCardClickFeedback();
+          addColorButtonFeedback();
+          addClickFeedbackToClickableDivs();
+        }, 100);
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+  
+  // 防止移动端双击缩放
+  function preventDoubleTapZoom() {
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, { passive: false });
+  }
+  
+  // 初始化
+  function init() {
+    console.log('[ClickFeedback] 初始化点击反馈系统 (触摸设备:', isTouchDevice, ')');
+    
+    injectClickFeedbackCSS();
+    addClickFeedbackToButtons();
+    addCardClickFeedback();
+    addColorButtonFeedback();
+    addClickFeedbackToClickableDivs();
+    observeNewElements();
+    
+    // 防止双击缩放
+    if (isTouchDevice) {
+      preventDoubleTapZoom();
+    }
+    
+    // 延迟再次执行，确保动态内容也被处理
+    setTimeout(() => {
+      addClickFeedbackToButtons();
+      addCardClickFeedback();
+      addColorButtonFeedback();
+      addClickFeedbackToClickableDivs();
+    }, 1000);
+    
+    setTimeout(() => {
+      addClickFeedbackToButtons();
+      addCardClickFeedback();
+      addColorButtonFeedback();
+      addClickFeedbackToClickableDivs();
+    }, 2500);
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+  
+  window.ClickFeedback = {
+    refresh: () => {
+      addClickFeedbackToButtons();
+      addCardClickFeedback();
+      addColorButtonFeedback();
+      addClickFeedbackToClickableDivs();
+    }
+  };
+  
+})();

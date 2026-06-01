@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f6f0e7" />
+    <title>MOLLY 20周年 · 沉浸式互动H5</title>
+    <!-- 路径修复：GitHub Pages 子目录部署（必须在所有脚本之前） -->
+    <script>
+      (function() {
+        var basePath = '/MOLLY-20th/';
+        if (!window.location.pathname.startsWith(basePath)) return;
+        
+        console.log('[PathFix] 启用路径修复');
+        
+        // 拦截 fetch
+        var originalFetch = window.fetch;
+        window.fetch = function(url, opts) {
+          if (typeof url === 'string' && url.startsWith('/assets/')) {
+            url = basePath + url.slice(1);
+          }
+          return originalFetch.call(this, url, opts);
+        };
+        
+        // 拦截 Image.src
+        var srcSetter = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').set;
+        Object.defineProperty(HTMLImageElement.prototype, 'src', {
+          set: function(v) {
+            if (typeof v === 'string' && v.startsWith('/assets/')) {
+              v = basePath + v.slice(1);
+            }
+            srcSetter.call(this, v);
+          },
+          get: function() { return srcSetter.call(this); }
+        });
+        
+        // 拦截 Audio/Video.src
+        var mediaSrcSetter = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src').set;
+        Object.defineProperty(HTMLMediaElement.prototype, 'src', {
+          set: function(v) {
+            if (typeof v === 'string' && v.startsWith('/assets/')) {
+              v = basePath + v.slice(1);
+            }
+            mediaSrcSetter.call(this, v);
+          },
+          get: function() { return mediaSrcSetter.call(this); }
+        });
+        
+        // 拦截 XHR
+        var origOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(m, u) {
+          if (typeof u === 'string' && u.startsWith('/assets/')) {
+            u = basePath + u.slice(1);
+          }
+          return origOpen.apply(this, arguments);
+        };
+      })();
+    </script>
+    <!-- 音效管理模块 -->
+    <script src="./assets/sound-manager.js"></script>
+    <!-- 交互音效增强脚本 -->
+    <script src="./assets/interaction-sounds.js"></script>
+    <!-- UI修复脚本（封面图+返回按钮） -->
+    <script src="./assets/ui-fixes.js"></script>
+    <!-- 小游戏优化脚本v2 -->
+    <script src="./assets/game-optimizations.js?v=3"></script>
+    <!-- 点击反馈优化脚本 -->
+    <script src="./assets/click-feedback.js"></script>
+    <script type="module" crossorigin src="./assets/index-DJ6v3JdF.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-C8gsoFNO.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
