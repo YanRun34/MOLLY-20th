@@ -386,6 +386,50 @@
     });
   }
   
+  // ==================== 修复1.5: 封面图手机端适配 ====================
+
+  function fixCoverImageMobile() {
+    // 查找封面图
+    const coverImg = document.querySelector('img[alt*="MOLLY"], img[alt*="20周年"]');
+    if (!coverImg) return;
+
+    // 注入封面图适配CSS
+    if (!document.getElementById('cover-mobile-css')) {
+      const style = document.createElement('style');
+      style.id = 'cover-mobile-css';
+      style.textContent = `
+        /* 封面图手机端完整显示 */
+        img[alt*="MOLLY"], img[alt*="20周年"] {
+          object-fit: contain !important;
+          object-position: top center !important;
+          width: 100% !important;
+          height: auto !important;
+          max-height: 100% !important;
+          position: relative !important;
+          inset: auto !important;
+        }
+
+        /* 封面容器适配 - 让容器高度自适应图片 */
+        img[alt*="MOLLY"] ~ *,
+        img[alt*="20周年"] ~ * {
+          position: relative !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 直接修改图片样式
+    coverImg.style.objectFit = 'contain';
+    coverImg.style.objectPosition = 'top center';
+    coverImg.style.position = 'relative';
+    coverImg.style.width = '100%';
+    coverImg.style.height = 'auto';
+    coverImg.style.maxHeight = '100vh';
+    coverImg.style.inset = 'auto';
+
+    console.log('[UIFixes] 封面图手机端适配已应用');
+  }
+
   // ==================== 初始化 ====================
   
   function init() {
@@ -393,11 +437,13 @@
     
     setTimeout(() => {
       fixCoverImage();
+      fixCoverImageMobile();
       addBackButton();
     }, 1000);
     
     setTimeout(() => {
       fixCoverImage();
+      fixCoverImageMobile();
     }, 2000);
   }
   
