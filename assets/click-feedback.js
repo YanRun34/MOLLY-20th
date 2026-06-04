@@ -360,17 +360,26 @@
       console.log('[ClickFeedback] 点击盲盒机链接');
     });
 
-    // 查找插入位置 - 在"开启最终旅程"按钮后面或页面底部
+    // 查找插入位置 - 在"开启最终旅程"按钮后面或海报下载区域
     const finalBtn = Array.from(document.querySelectorAll('button')).find(
       btn => btn.textContent.includes('开启最终旅程')
     );
 
     if (finalBtn && finalBtn.parentElement) {
-      finalBtn.parentElement.insertBefore(linkBtn, finalBtn.nextSibling);
+      // 在"开启最终旅程"按钮后面插入，并添加一些间距
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'margin-top: 24px; padding: 0 20px;';
+      wrapper.appendChild(linkBtn);
+      finalBtn.parentElement.insertBefore(wrapper, finalBtn.nextSibling);
     } else {
-      // 插入到页面底部
-      const root = document.getElementById('root') || document.body;
-      root.appendChild(linkBtn);
+      // 查找海报下载区域或其他内容区域
+      const contentArea = document.querySelector('[class*="poster"], [class*="download"], [class*="share"]') 
+                          || document.getElementById('root') 
+                          || document.body;
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'margin-top: 24px; padding: 0 20px;';
+      wrapper.appendChild(linkBtn);
+      contentArea.appendChild(wrapper);
     }
 
     console.log('[ClickFeedback] 盲盒机链接已添加');
