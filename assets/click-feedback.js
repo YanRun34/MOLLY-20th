@@ -277,6 +277,104 @@
       lastTouchEnd = now;
     }, { passive: false });
   }
+
+  // ==================== 泡泡玛特盲盒机跳转 ====================
+
+  function addBlindBoxLink() {
+    // 检查是否已添加
+    if (document.getElementById('blind-box-link')) return;
+
+    // 查找最终页面特征 - "开启最终旅程"按钮或完成页面
+    const bodyText = document.body.textContent || '';
+    const hasFinalButton = bodyText.includes('开启最终旅程');
+    const isCompletePage = bodyText.includes('完成') && bodyText.includes('11');
+
+    if (!hasFinalButton && !isCompletePage) return;
+
+    console.log('[ClickFeedback] 检测到最终页面，添加盲盒机链接');
+
+    // 注入CSS
+    if (!document.getElementById('blind-box-css')) {
+      const style = document.createElement('style');
+      style.id = 'blind-box-css';
+      style.textContent = `
+        #blind-box-link {
+          display: block;
+          width: 80%;
+          max-width: 300px;
+          margin: 20px auto;
+          padding: 16px 24px;
+          background: linear-gradient(135deg, #FF6B9D 0%, #FF8E53 100%);
+          color: #fff;
+          text-align: center;
+          text-decoration: none;
+          border-radius: 30px;
+          font-size: 18px;
+          font-weight: bold;
+          box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+        }
+        #blind-box-link:active {
+          transform: scale(0.95);
+          box-shadow: 0 2px 8px rgba(255, 107, 157, 0.3);
+        }
+        #blind-box-link .sub-text {
+          display: block;
+          font-size: 12px;
+          font-weight: normal;
+          margin-top: 4px;
+          opacity: 0.9;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 创建链接按钮
+    const linkBtn = document.createElement('a');
+    linkBtn.id = 'blind-box-link';
+    linkBtn.href = 'weixin://dl/business/?t=FvHuubR4yLPUMzB';
+    linkBtn.innerHTML = '🎁 前往泡泡抽盒机<span class="sub-text">开启你的专属MOLLY盲盒</span>';
+
+    // 点击事件处理
+    linkBtn.addEventListener('click', (e) => {
+      // 尝试多种跳转方式
+      const miniprogramUrl = '#小程序://泡泡抽盒机/FvHuubR4yLPUMzB';
+
+      // 在微信环境中尝试跳转小程序
+      if (typeof wx !== 'undefined' && wx.miniProgram) {
+        wx.miniProgram.navigateTo({
+          url: '/pages/index/index'
+        });
+      }
+
+      // 复制小程序链接到剪贴板（备用方案）
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(miniprogramUrl).then(() => {
+          alert('小程序链接已复制，请在微信中打开');
+        });
+      }
+
+      console.log('[ClickFeedback] 点击盲盒机链接');
+    });
+
+    // 查找插入位置 - 在"开启最终旅程"按钮后面或页面底部
+    const finalBtn = Array.from(document.querySelectorAll('button')).find(
+      btn => btn.textContent.includes('开启最终旅程')
+    );
+
+    if (finalBtn && finalBtn.parentElement) {
+      finalBtn.parentElement.insertBefore(linkBtn, finalBtn.nextSibling);
+    } else {
+      // 插入到页面底部
+      const root = document.getElementById('root') || document.body;
+      root.appendChild(linkBtn);
+    }
+
+    console.log('[ClickFeedback] 盲盒机链接已添加');
+  }
   
   // 修复封面图手机端显示不全
   function fixCoverImageMobile() {
@@ -405,7 +503,23 @@
       addColorButtonFeedback();
       addClickFeedbackToClickableDivs();
       fixStartButtonPosition();
+      addBlindBoxLink();
     }, 2500);
+
+    // 监听页面变化，检测最终页面
+    observeForFinalPage();
+  }
+
+  // 监听页面变化，检测是否到达最终页面
+  function observeForFinalPage() {
+    const observer = new MutationObserver(() => {
+      addBlindBoxLink();
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
   }
   
   if (document.readyState === 'loading') {
