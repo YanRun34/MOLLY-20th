@@ -451,24 +451,46 @@
       parent = parent.parentElement;
     }
 
-    // 直接设置按钮样式 - 定位到封面图"开启旅程"位置（9:16竖版图片底部）
+    // 直接设置按钮样式 - 创建可见的开启旅程按钮
     startBtn.style.cssText = `
       position: absolute !important;
-      bottom: 2% !important;
+      bottom: 3% !important;
       left: 50% !important;
       transform: translateX(-50%) !important;
       z-index: 10 !important;
-      width: 65% !important;
-      max-width: 300px !important;
-      height: 60px !important;
-      background: transparent !important;
+      width: 70% !important;
+      max-width: 320px !important;
+      height: 56px !important;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+      color: #fff !important;
       border: none !important;
+      border-radius: 28px !important;
       padding: 0 !important;
       margin: 0 !important;
       opacity: 1 !important;
+      font-size: 20px !important;
+      font-weight: bold !important;
+      text-align: center !important;
+      line-height: 56px !important;
+      box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4) !important;
+      cursor: pointer !important;
+      -webkit-tap-highlight-color: transparent !important;
+      touch-action: manipulation !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
     `;
 
-    console.log('[ClickFeedback] 开启旅程按钮位置已调整');
+    // 添加点击效果
+    startBtn.addEventListener('touchstart', () => {
+      startBtn.style.transform = 'translateX(-50%) scale(0.95)';
+      startBtn.style.boxShadow = '0 2px 8px rgba(255, 165, 0, 0.3)';
+    }, { passive: true });
+
+    startBtn.addEventListener('touchend', () => {
+      startBtn.style.transform = 'translateX(-50%) scale(1)';
+      startBtn.style.boxShadow = '0 4px 15px rgba(255, 165, 0, 0.4)';
+    }, { passive: true });
+
+    console.log('[ClickFeedback] 开启旅程按钮已创建');
   }
 
   // 初始化
