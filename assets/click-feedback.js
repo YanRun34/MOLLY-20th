@@ -463,7 +463,7 @@
     // 直接设置按钮样式 - 透明背景，与封面图对齐
     // 使用 setProperty 带 !important 确保覆盖React样式
     startBtn.style.setProperty('position', 'absolute', 'important');
-    startBtn.style.setProperty('bottom', '22%', 'important');
+    startBtn.style.setProperty('bottom', '35%', 'important');
     startBtn.style.setProperty('left', '50%', 'important');
     startBtn.style.setProperty('transform', 'translateX(-50%)', 'important');
     startBtn.style.setProperty('z-index', '10', 'important');
