@@ -460,7 +460,7 @@
       parent = parent.parentElement;
     }
 
-    // 直接设置按钮样式 - 创建可见的开启旅程按钮
+    // 直接设置按钮样式 - 透明背景，与封面图对齐
     startBtn.style.cssText = `
       position: absolute !important;
       bottom: 3% !important;
@@ -470,8 +470,8 @@
       width: 70% !important;
       max-width: 320px !important;
       height: 56px !important;
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
-      color: #fff !important;
+      background: transparent !important;
+      color: transparent !important;
       border: none !important;
       border-radius: 28px !important;
       padding: 0 !important;
@@ -481,25 +481,22 @@
       font-weight: bold !important;
       text-align: center !important;
       line-height: 56px !important;
-      box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4) !important;
       cursor: pointer !important;
       -webkit-tap-highlight-color: transparent !important;
       touch-action: manipulation !important;
-      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      transition: transform 0.2s ease !important;
     `;
 
     // 添加点击效果
     startBtn.addEventListener('touchstart', () => {
       startBtn.style.transform = 'translateX(-50%) scale(0.95)';
-      startBtn.style.boxShadow = '0 2px 8px rgba(255, 165, 0, 0.3)';
     }, { passive: true });
 
     startBtn.addEventListener('touchend', () => {
       startBtn.style.transform = 'translateX(-50%) scale(1)';
-      startBtn.style.boxShadow = '0 4px 15px rgba(255, 165, 0, 0.4)';
     }, { passive: true });
 
-    console.log('[ClickFeedback] 开启旅程按钮已创建');
+    console.log('[ClickFeedback] 开启旅程按钮已对齐封面图');
   }
 
   // 初始化
