@@ -520,6 +520,11 @@
       addClickFeedbackToClickableDivs();
     }, 1000);
     
+    // 延迟执行按钮位置修复，确保React已渲染
+    setTimeout(() => {
+      fixStartButtonPosition();
+    }, 2000);
+    
     setTimeout(() => {
       addClickFeedbackToButtons();
       addCardClickFeedback();
