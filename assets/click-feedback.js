@@ -461,31 +461,26 @@
     }
 
     // 直接设置按钮样式 - 透明背景，与封面图对齐
-    startBtn.style.cssText = `
-      position: absolute !important;
-      bottom: 22% !important;
-      left: 50% !important;
-      transform: translateX(-50%) !important;
-      z-index: 10 !important;
-      width: 70% !important;
-      max-width: 320px !important;
-      height: 56px !important;
-      background: transparent !important;
-      color: transparent !important;
-      border: none !important;
-      border-radius: 28px !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      opacity: 1 !important;
-      font-size: 20px !important;
-      font-weight: bold !important;
-      text-align: center !important;
-      line-height: 56px !important;
-      cursor: pointer !important;
-      -webkit-tap-highlight-color: transparent !important;
-      touch-action: manipulation !important;
-      transition: transform 0.2s ease !important;
-    `;
+    // 使用 setProperty 带 !important 确保覆盖React样式
+    startBtn.style.setProperty('position', 'absolute', 'important');
+    startBtn.style.setProperty('bottom', '22%', 'important');
+    startBtn.style.setProperty('left', '50%', 'important');
+    startBtn.style.setProperty('transform', 'translateX(-50%)', 'important');
+    startBtn.style.setProperty('z-index', '10', 'important');
+    startBtn.style.setProperty('width', '70%', 'important');
+    startBtn.style.setProperty('max-width', '320px', 'important');
+    startBtn.style.setProperty('height', '56px', 'important');
+    startBtn.style.setProperty('background', 'transparent', 'important');
+    startBtn.style.setProperty('color', 'transparent', 'important');
+    startBtn.style.setProperty('border', 'none', 'important');
+    startBtn.style.setProperty('border-radius', '28px', 'important');
+    startBtn.style.setProperty('padding', '0', 'important');
+    startBtn.style.setProperty('margin', '0', 'important');
+    startBtn.style.setProperty('opacity', '1', 'important');
+    startBtn.style.setProperty('cursor', 'pointer', 'important');
+    startBtn.style.setProperty('-webkit-tap-highlight-color', 'transparent', 'important');
+    startBtn.style.setProperty('touch-action', 'manipulation', 'important');
+    startBtn.style.setProperty('transition', 'transform 0.2s ease', 'important');
 
     // 添加点击效果
     startBtn.addEventListener('touchstart', () => {
