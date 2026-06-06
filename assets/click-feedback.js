@@ -463,7 +463,7 @@
     // 直接设置按钮样式 - 透明背景，与封面图对齐
     startBtn.style.cssText = `
       position: absolute !important;
-      bottom: 8% !important;
+      bottom: 18% !important;
       left: 50% !important;
       transform: translateX(-50%) !important;
       z-index: 10 !important;
