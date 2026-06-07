@@ -78,8 +78,17 @@
         user-select: none !important;
       }
       
-      /* 防止移动端双击缩放 */
-      * {
+      /* 游戏区域触摸优化 - 确保canvas和游戏元素可正常点击 */
+      canvas, [class*="game"], [class*="flower"], [class*="catch"],
+      [data-world], svg, .game-area, .game-container {
+        touch-action: auto !important;
+        pointer-events: auto !important;
+        -webkit-user-select: auto !important;
+        user-select: auto !important;
+      }
+      
+      /* 防止移动端双击缩放 - 但不影响游戏区域 */
+      *:not(canvas):not([class*="game"]):not([class*="flower"]):not([class*="catch"]):not(svg) {
         touch-action: manipulation;
       }
     `;
@@ -660,7 +669,7 @@
     // 查找所有音频元素并调大音量
     const audioElements = document.querySelectorAll('audio');
     audioElements.forEach(audio => {
-      audio.volume = 0.8; // 设置音量为80%
+      audio.volume = 1.0; // 设置音量为100%（最大）
       console.log('[ClickFeedback] 音频音量已调整为80%');
     });
 
@@ -669,7 +678,7 @@
       mutations.forEach(mutation => {
         mutation.addedNodes.forEach(node => {
           if (node.nodeType === 1 && node.tagName === 'AUDIO') {
-            node.volume = 0.8;
+            node.volume = 1.0;
             console.log('[ClickFeedback] 新音频音量已调整为80%');
           }
         });
