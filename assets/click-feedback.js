@@ -404,6 +404,86 @@
     }
 
     console.log('[ClickFeedback] 盲盒机链接已添加');
+
+    // 添加"再玩一次"按钮
+    addReplayButton();
+  }
+
+  // ==================== 再玩一次按钮 ====================
+  function addReplayButton() {
+    // 检查是否已添加
+    if (document.getElementById('replay-btn')) return;
+
+    console.log('[ClickFeedback] 添加再玩一次按钮');
+
+    // 注入CSS
+    if (!document.getElementById('replay-btn-css')) {
+      const style = document.createElement('style');
+      style.id = 'replay-btn-css';
+      style.textContent = `
+        #replay-btn {
+          display: block;
+          width: 80%;
+          max-width: 300px;
+          margin: 16px auto;
+          padding: 16px 24px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: #fff;
+          text-align: center;
+          text-decoration: none;
+          border-radius: 30px;
+          font-size: 18px;
+          font-weight: bold;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+          border: none;
+        }
+        #replay-btn:active {
+          transform: scale(0.95);
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 创建按钮
+    const replayBtn = document.createElement('button');
+    replayBtn.id = 'replay-btn';
+    replayBtn.textContent = '🔄 再玩一次';
+
+    // 点击事件 - 刷新页面重新开始
+    replayBtn.addEventListener('click', () => {
+      window.location.reload();
+      console.log('[ClickFeedback] 点击再玩一次');
+    });
+
+    // 查找插入位置 - 在盲盒机链接后面
+    const blindBoxLink = document.getElementById('blind-box-link');
+    if (blindBoxLink && blindBoxLink.parentElement) {
+      blindBoxLink.parentElement.insertBefore(replayBtn, blindBoxLink.nextSibling);
+    } else {
+      // 查找"开启最终旅程"按钮
+      const finalBtn = Array.from(document.querySelectorAll('button')).find(
+        btn => btn.textContent.includes('开启最终旅程')
+      );
+      if (finalBtn && finalBtn.parentElement) {
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'margin-top: 16px; padding: 0 20px;';
+        wrapper.appendChild(replayBtn);
+        finalBtn.parentElement.insertBefore(wrapper, finalBtn.nextSibling);
+      } else {
+        const contentArea = document.getElementById('root') || document.body;
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'margin-top: 16px; padding: 0 20px;';
+        wrapper.appendChild(replayBtn);
+        contentArea.appendChild(wrapper);
+      }
+    }
+
+    console.log('[ClickFeedback] 再玩一次按钮已添加');
   }
   
   // 修复封面图手机端显示不全
