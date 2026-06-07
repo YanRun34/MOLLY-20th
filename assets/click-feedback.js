@@ -335,26 +335,47 @@
     // 创建链接按钮
     const linkBtn = document.createElement('a');
     linkBtn.id = 'blind-box-link';
-    linkBtn.href = 'weixin://dl/business/?t=FvHuubR4yLPUMzB';
+    linkBtn.href = '#小程序://泡泡抽盒机/ahqApPB0UAFrKFG';
     linkBtn.innerHTML = '🎁 前往泡泡抽盒机<span class="sub-text">开启你的专属MOLLY盲盒</span>';
 
     // 点击事件处理
     linkBtn.addEventListener('click', (e) => {
-      // 尝试多种跳转方式
-      const miniprogramUrl = '#小程序://泡泡抽盒机/FvHuubR4yLPUMzB';
+      // 阻止默认跳转，使用小程序链接
+      e.preventDefault();
+      
+      const miniprogramUrl = '#小程序://泡泡抽盒机/ahqApPB0UAFrKFG';
 
       // 在微信环境中尝试跳转小程序
       if (typeof wx !== 'undefined' && wx.miniProgram) {
         wx.miniProgram.navigateTo({
           url: '/pages/index/index'
         });
+        return;
       }
 
-      // 复制小程序链接到剪贴板（备用方案）
+      // 复制小程序链接到剪贴板
       if (navigator.clipboard) {
         navigator.clipboard.writeText(miniprogramUrl).then(() => {
           alert('小程序链接已复制，请在微信中打开');
+        }).catch(() => {
+          // 备用复制方案
+          const input = document.createElement('input');
+          input.value = miniprogramUrl;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+          alert('小程序链接已复制，请在微信中打开');
         });
+      } else {
+        // 备用复制方案
+        const input = document.createElement('input');
+        input.value = miniprogramUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('小程序链接已复制，请在微信中打开');
       }
 
       console.log('[ClickFeedback] 点击盲盒机链接');
