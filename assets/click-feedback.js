@@ -638,6 +638,9 @@
 
     // 监听页面变化，检测最终页面
     observeForFinalPage();
+
+    // 调整背景音乐音量
+    adjustAudioVolume();
   }
 
   // 监听页面变化，检测是否到达最终页面
@@ -649,6 +652,32 @@
       childList: true,
       subtree: true,
       characterData: true
+    });
+  }
+
+  // 调整背景音乐音量
+  function adjustAudioVolume() {
+    // 查找所有音频元素并调大音量
+    const audioElements = document.querySelectorAll('audio');
+    audioElements.forEach(audio => {
+      audio.volume = 0.8; // 设置音量为80%
+      console.log('[ClickFeedback] 音频音量已调整为80%');
+    });
+
+    // 监听新创建的音频元素
+    const audioObserver = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType === 1 && node.tagName === 'AUDIO') {
+            node.volume = 0.8;
+            console.log('[ClickFeedback] 新音频音量已调整为80%');
+          }
+        });
+      });
+    });
+    audioObserver.observe(document.body, {
+      childList: true,
+      subtree: true
     });
   }
   
