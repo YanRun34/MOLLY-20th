@@ -383,7 +383,7 @@
 
     // 查找插入位置 - 在"开启最终旅程"按钮后面或海报下载区域
     const finalBtn = Array.from(document.querySelectorAll('button')).find(
-      btn => btn.textContent.includes('开启最终旅程')
+      btn => btn.textContent.includes('开启最终旅程') || (btn.getAttribute('aria-label') || '').includes('开启最终旅程')
     );
 
     if (finalBtn && finalBtn.parentElement) {
@@ -536,12 +536,13 @@
 
   // 将"开启旅程"按钮定位到封面图中的按钮位置
   function fixStartButtonPosition() {
-    // 查找开启旅程按钮 - 使用多种选择器
+    // 查找开启旅程按钮 - 使用多种选择器（包括aria-label）
     const allButtons = document.querySelectorAll('button, [role="button"]');
     let startBtn = null;
     for (const btn of allButtons) {
       const text = (btn.textContent || '').trim();
-      if (text === '开启旅程' || text.includes('开启旅程')) {
+      const ariaLabel = (btn.getAttribute('aria-label') || '').trim();
+      if (text === '开启旅程' || text.includes('开启旅程') || ariaLabel === '开启旅程' || ariaLabel.includes('开启旅程')) {
         startBtn = btn;
         break;
       }
