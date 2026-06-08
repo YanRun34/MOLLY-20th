@@ -550,64 +550,8 @@
 
   // 将"开启旅程"按钮定位到封面图中的按钮位置
   function fixStartButtonPosition() {
-    // 查找开启旅程按钮 - 使用多种选择器（包括aria-label）
-    const allButtons = document.querySelectorAll('button, [role="button"]');
-    let startBtn = null;
-    for (const btn of allButtons) {
-      const text = (btn.textContent || '').trim();
-      const ariaLabel = (btn.getAttribute('aria-label') || '').trim();
-      if (text === '开启旅程' || text.includes('开启旅程') || ariaLabel === '开启旅程' || ariaLabel.includes('开启旅程')) {
-        startBtn = btn;
-        break;
-      }
-    }
-    if (!startBtn) return;
-    if (startBtn.dataset.btnPosFixed) return;
-    startBtn.dataset.btnPosFixed = 'true';
-
-    // 找到按钮的父容器，设置为relative定位
-    let parent = startBtn.parentElement;
-    while (parent && parent !== document.body) {
-      const parentStyle = window.getComputedStyle(parent);
-      if (parentStyle.position === 'relative' || parentStyle.position === 'absolute') {
-        break;
-      }
-      parent.style.position = 'relative';
-      parent = parent.parentElement;
-    }
-
-    // 直接设置按钮样式 - 透明背景，与封面图对齐
-    // 使用 setProperty 带 !important 确保覆盖React样式
-    startBtn.style.setProperty('position', 'absolute', 'important');
-    startBtn.style.setProperty('bottom', '8%', 'important');
-    startBtn.style.setProperty('left', '50%', 'important');
-    startBtn.style.setProperty('transform', 'translateX(-50%)', 'important');
-    startBtn.style.setProperty('z-index', '10', 'important');
-    startBtn.style.setProperty('width', '70%', 'important');
-    startBtn.style.setProperty('max-width', '320px', 'important');
-    startBtn.style.setProperty('height', '56px', 'important');
-    startBtn.style.setProperty('background', 'transparent', 'important');
-    startBtn.style.setProperty('color', 'transparent', 'important');
-    startBtn.style.setProperty('border', 'none', 'important');
-    startBtn.style.setProperty('border-radius', '28px', 'important');
-    startBtn.style.setProperty('padding', '0', 'important');
-    startBtn.style.setProperty('margin', '0', 'important');
-    startBtn.style.setProperty('opacity', '1', 'important');
-    startBtn.style.setProperty('cursor', 'pointer', 'important');
-    startBtn.style.setProperty('-webkit-tap-highlight-color', 'transparent', 'important');
-    startBtn.style.setProperty('touch-action', 'manipulation', 'important');
-    startBtn.style.setProperty('transition', 'transform 0.2s ease', 'important');
-
-    // 添加点击效果
-    startBtn.addEventListener('touchstart', () => {
-      startBtn.style.transform = 'translateX(-50%) scale(0.95)';
-    }, { passive: true });
-
-    startBtn.addEventListener('touchend', () => {
-      startBtn.style.transform = 'translateX(-50%) scale(1)';
-    }, { passive: true });
-
-    console.log('[ClickFeedback] 开启旅程按钮已对齐封面图');
+    // 不再修改按钮位置和样式，保持React原始渲染
+    console.log('[ClickFeedback] 按钮位置保持原样');
   }
 
   // 初始化
@@ -671,36 +615,8 @@
 
   // 调整背景音乐音量（只调整背景音乐，不影响音效）
   function adjustAudioVolume() {
-    // 查找所有音频元素
-    const audioElements = document.querySelectorAll('audio');
-    audioElements.forEach(audio => {
-      // 只调整背景音乐（循环播放、时长较长的音频）
-      const isBackgroundMusic = audio.loop === true || audio.duration > 30 || audio.src.includes('bgm') || audio.src.includes('music');
-      if (isBackgroundMusic) {
-        audio.volume = 0.8; // 背景音乐80%
-        console.log('[ClickFeedback] 背景音乐音量已调整为80%');
-      }
-      // 音效保持原音量，不调整
-    });
-
-    // 监听新创建的音频元素
-    const audioObserver = new MutationObserver((mutations) => {
-      mutations.forEach(mutation => {
-        mutation.addedNodes.forEach(node => {
-          if (node.nodeType === 1 && node.tagName === 'AUDIO') {
-            const isBackgroundMusic = node.loop === true || node.duration > 30 || node.src.includes('bgm') || node.src.includes('music');
-            if (isBackgroundMusic) {
-              node.volume = 0.8;
-              console.log('[ClickFeedback] 新背景音乐音量已调整为80%');
-            }
-          }
-        });
-      });
-    });
-    audioObserver.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
+    // 不再强制修改音量，保持原样
+    console.log('[ClickFeedback] 音频音量保持原样');
   }
   
   if (document.readyState === 'loading') {
