@@ -87,8 +87,13 @@
         user-select: auto !important;
       }
       
+      /* 游戏容器和body在游戏时恢复触摸 */
+      body:has(canvas), body:has([class*="game"]), body:has([class*="flower"]) {
+        touch-action: auto !important;
+      }
+      
       /* 防止移动端双击缩放 - 但不影响游戏区域 */
-      *:not(canvas):not([class*="game"]):not([class*="flower"]):not([class*="catch"]):not(svg) {
+      *:not(canvas):not([class*="game"]):not([class*="flower"]):not([class*="catch"]):not(svg):not(body):not(html) {
         touch-action: manipulation;
       }
     `;
