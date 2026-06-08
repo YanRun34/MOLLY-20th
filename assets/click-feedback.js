@@ -597,6 +597,9 @@
     // 监听页面变化，检测最终页面
     observeForFinalPage();
 
+    // 启用双击接花模式
+    enableDoubleTapCatch();
+
     // 调整背景音乐音量
     adjustAudioVolume();
   }
@@ -619,6 +622,101 @@
     console.log('[ClickFeedback] 音频音量保持原样');
   }
   
+  // ==================== 花花世界双击接花 ====================
+  function enableDoubleTapCatch() {
+    if (document.getElementById('double-tap-catch-css')) return;
+    
+    console.log('[ClickFeedback] 启用双击接花模式');
+    
+    // 注入CSS - 双击提示
+    const style = document.createElement('style');
+    style.id = 'double-tap-catch-css';
+    style.textContent = `
+      #double-tap-hint {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 20px;
+        font-size: 16px;
+        z-index: 9999;
+        pointer-events: none;
+        animation: doubleTapHintFade 3s ease forwards;
+      }
+      @keyframes doubleTapHintFade {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        85% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // 记录上一次点击的时间和位置
+    let lastTapTime = 0;
+    let lastTapX = 0;
+    let lastTapY = 0;
+    const doubleTapDelay = 400; // 双击间隔（毫秒）
+    const doubleTapDistance = 80; // 双击最大距离（像素）
+
+    // 监听整个文档的触摸事件
+    document.addEventListener('touchend', function(e) {
+      const now = Date.now();
+      const touch = e.changedTouches[0];
+      const x = touch.clientX;
+      const y = touch.clientY;
+
+      // 检查是否为双击
+      const timeDiff = now - lastTapTime;
+      const distDiff = Math.sqrt((x - lastTapX) ** 2 + (y - lastTapY) ** 2);
+
+      if (timeDiff < doubleTapDelay && distDiff < doubleTapDistance) {
+        // 双击触发！模拟点击事件在双击位置
+        const target = document.elementFromPoint(x, y);
+        if (target) {
+          // 模拟pointerdown + pointerup事件
+          const events = ['pointerdown', 'pointerup', 'click', 'touchstart', 'touchend'];
+          events.forEach(eventType => {
+            const event = new PointerEvent(eventType, {
+              bubbles: true,
+              cancelable: true,
+              clientX: x,
+              clientY: y,
+              pointerId: 1,
+              pointerType: 'touch',
+              isPrimary: true
+            });
+            target.dispatchEvent(event);
+          });
+          console.log('[ClickFeedback] 双击接花触发', x, y);
+        }
+        // 重置
+        lastTapTime = 0;
+        lastTapX = 0;
+        lastTapY = 0;
+      } else {
+        lastTapTime = now;
+        lastTapX = x;
+        lastTapY = y;
+      }
+    }, { passive: true, capture: true });
+
+    // 显示双击提示
+    function showDoubleTapHint() {
+      const hint = document.createElement('div');
+      hint.id = 'double-tap-hint';
+      hint.textContent = '👆 双击接花';
+      document.body.appendChild(hint);
+      setTimeout(() => hint.remove(), 3000);
+    }
+
+    // 延迟显示提示
+    setTimeout(showDoubleTapHint, 2000);
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
