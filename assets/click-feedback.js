@@ -669,13 +669,18 @@
     });
   }
 
-  // 调整背景音乐音量
+  // 调整背景音乐音量（只调整背景音乐，不影响音效）
   function adjustAudioVolume() {
-    // 查找所有音频元素并调大音量
+    // 查找所有音频元素
     const audioElements = document.querySelectorAll('audio');
     audioElements.forEach(audio => {
-      audio.volume = 1.0; // 设置音量为100%（最大）
-      console.log('[ClickFeedback] 音频音量已调整为80%');
+      // 只调整背景音乐（循环播放、时长较长的音频）
+      const isBackgroundMusic = audio.loop === true || audio.duration > 30 || audio.src.includes('bgm') || audio.src.includes('music');
+      if (isBackgroundMusic) {
+        audio.volume = 0.8; // 背景音乐80%
+        console.log('[ClickFeedback] 背景音乐音量已调整为80%');
+      }
+      // 音效保持原音量，不调整
     });
 
     // 监听新创建的音频元素
@@ -683,8 +688,11 @@
       mutations.forEach(mutation => {
         mutation.addedNodes.forEach(node => {
           if (node.nodeType === 1 && node.tagName === 'AUDIO') {
-            node.volume = 1.0;
-            console.log('[ClickFeedback] 新音频音量已调整为80%');
+            const isBackgroundMusic = node.loop === true || node.duration > 30 || node.src.includes('bgm') || node.src.includes('music');
+            if (isBackgroundMusic) {
+              node.volume = 0.8;
+              console.log('[ClickFeedback] 新背景音乐音量已调整为80%');
+            }
           }
         });
       });
